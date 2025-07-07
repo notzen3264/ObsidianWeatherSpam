@@ -50,7 +50,7 @@ function spamApis() {
 }
 
 app.get("/", (req, res) => {
-  res.send("Weather spammer server is humming along.");
+  res.send("Weather spammer server is online.");
 });
 
 app.listen(PORT, () => {
