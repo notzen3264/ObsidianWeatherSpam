@@ -14,7 +14,7 @@ const openWeatherBase = "https://api.openweathermap.org/data/2.5/weather";
 
 // Dispatch settings
 const cityList = ["London", "Tokyo", "Paris", "New York", "Berlin"];
-const DISPATCH_INTERVAL = 10;
+const DISPATCH_INTERVAL = 1;
 let index = 0;
 
 async function querySheCodes(city) {
