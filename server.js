@@ -4,75 +4,86 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// API keys and endpoints
+// 🔁 Dispatch frequency
+const DISPATCH_INTERVAL = 100;
+
+// 🌍 APIs
 const shecodesKeys = [
   "b2a5adcct04b33178913oc335f405433",
   "eac360db5fc86ft86450f3693e73o43f"
 ];
 const openWeatherKey = "a4f791ec3190105377dcfdf1cf72f27d";
-const openWeatherBase = "https://api.openweathermap.org/data/2.5/weather";
+const cities = ["London", "Tokyo", "Paris", "New York", "Berlin"];
 const shecodesBase = "https://api.shecodes.io/weather/v1/current";
+const openWeatherBase = "https://api.openweathermap.org/data/2.5/weather";
+let batchCounter = 0;
 
-// Config
-const cities = ["London", "Tokyo", "Paris", "New York"];
-let index = 0;
-
-async function querySheCodes(city, key) {
+async function fireSheCodes(city, key) {
   const url = `${shecodesBase}?query=${city}&key=${key}&units=metric`;
-  console.log(`[SheCodes] Requesting: ${url}`);
+  console.log(`[SheCodes] [Key: ${key}] Requesting: ${url}`);
   try {
     const response = await axios.get(url);
-    console.log(`[SheCodes] Response:`, JSON.stringify(response.data));
-  } catch (error) {
-    console.error(`[SheCodes] Error: ${error.message}`);
+    console.log(`[SheCodes] [Key: ${key}] Response:`, JSON.stringify(response.data));
+  } catch (err) {
+    console.error(`[SheCodes] [Key: ${key}] Error: ${err.message}`);
   }
 }
 
-async function queryOpenWeather(city) {
+async function fireOpenWeather(city) {
   const url = `${openWeatherBase}?q=${city}&appid=${openWeatherKey}&units=metric`;
-  console.log(`[OpenWeatherMap] Requesting: ${url}`);
+  console.log(`[OpenWeatherMap] [Key: ${openWeatherKey}] Requesting: ${url}`);
   try {
     const response = await axios.get(url);
-    console.log(`[OpenWeatherMap] Response:`, JSON.stringify(response.data));
-  } catch (error) {
-    console.error(`[OpenWeatherMap] Error: ${error.message}`);
+    console.log(`[OpenWeatherMap] [Key: ${openWeatherKey}] Response:`, JSON.stringify(response.data));
+  } catch (err) {
+    console.error(`[OpenWeatherMap] [Key: ${openWeatherKey}] Error: ${err.message}`);
   }
 }
 
-function spamApis() {
-  setInterval(async () => {
-    const city = cities[index % cities.length];
-    for (const key of shecodesKeys) {
-      await querySheCodes(city, key);
+function spamInParallel() {
+  setInterval(() => {
+    batchCounter++;
+    console.log(`\n🚀 Batch #${batchCounter} — ${cities.length} cities × ${shecodesKeys.length + 1} requests`);
+
+    for (const city of cities) {
+      // SheCodes with all keys
+      for (const key of shecodesKeys) {
+        fireSheCodes(city, key);
+      }
+
+      // OpenWeatherMap
+      fireOpenWeather(city);
     }
-    await queryOpenWeather(city);
-    index++;
-  }, 1); // ⚠️ Dispatch every 1ms
+  }, DISPATCH_INTERVAL);
 }
 
-// 🌐 Serve HTML at root
-app.get("/", (req, res) => {
+// 🌐 Serve HTML page at root
+app.get("/", (_req, res) => {
   res.send(`
     <!DOCTYPE html>
     <html>
     <head>
       <title>Weather Spammer Server</title>
       <style>
-        body { font-family: sans-serif; background: #f0f0f0; padding: 2rem; }
-        h1 { color: #333; }
-        p { font-size: 1.1rem; }
+        body { background: #1b1b1b; color: #eee; font-family: sans-serif; padding: 2rem; }
+        h1 { color: #ffdd57; }
       </style>
     </head>
     <body>
-      <h1>Weather Spammer Server Is Online</h1>
-      <p>API requests are being sent every 1 millisecond.</p>
-      <p>Check your server logs to see real-time activity.</p>
+      <h1>Weather Spammer Server Online</h1>
+      <p>Dispatching requests every ${DISPATCH_INTERVAL}ms in parallel.</p>
+      <p>SheCodes API Keys:</p>
+      <ul>
+        ${shecodesKeys.map(k => `<li><code>${k}</code></li>`).join("")}
+      </ul>
+      <p>OpenWeatherMap Key:</p>
+      <code>${openWeatherKey}</code>
     </body>
     </html>
   `);
 });
 
 app.listen(PORT, () => {
-  console.log(`Server listening at http://localhost:${PORT}`);
-  spamApis();
+  console.log(`🚀 Server live at http://localhost:${PORT}!`);
+  spamInParallel();
 });
