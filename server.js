@@ -8,7 +8,8 @@ const DISPATCH_INTERVAL = 10;
 
 const shecodesKeys = [
   "b2a5adcct04b33178913oc335f405433",
-  "eac360db5fc86ft86450f3693e73o43f"
+  "eac360db5fc86ft86450f3693e73o43f",
+  "b03a640e5ef6980o4da35b006t5f2942"
 ];
 const openWeatherKey = "a4f791ec3190105377dcfdf1cf72f27d";
 const cities = ["London", "Tokyo", "Paris", "New York", "Berlin"];
