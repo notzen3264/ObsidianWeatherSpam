@@ -4,10 +4,8 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 🔁 Dispatch frequency
 const DISPATCH_INTERVAL = 10;
 
-// 🌍 APIs
 const shecodesKeys = [
   "b2a5adcct04b33178913oc335f405433",
   "eac360db5fc86ft86450f3693e73o43f"
@@ -46,18 +44,15 @@ function spamInParallel() {
     console.log(`\n🚀 Batch #${batchCounter} — ${cities.length} cities × ${shecodesKeys.length + 1} requests`);
 
     for (const city of cities) {
-      // SheCodes with all keys
       for (const key of shecodesKeys) {
         fireSheCodes(city, key);
       }
 
-      // OpenWeatherMap
       fireOpenWeather(city);
     }
   }, DISPATCH_INTERVAL);
 }
 
-// 🌐 Serve HTML page at root
 app.get("/", (_req, res) => {
   res.send(`
 <!DOCTYPE html>
