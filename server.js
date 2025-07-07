@@ -5,7 +5,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // 🔁 Dispatch frequency
-const DISPATCH_INTERVAL = 100;
+const DISPATCH_INTERVAL = 10;
 
 // 🌍 APIs
 const shecodesKeys = [
@@ -60,26 +60,69 @@ function spamInParallel() {
 // 🌐 Serve HTML page at root
 app.get("/", (_req, res) => {
   res.send(`
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>Weather Spammer Server</title>
-      <style>
-        body { background: #1b1b1b; color: #eee; font-family: sans-serif; padding: 2rem; }
-        h1 { color: #ffdd57; }
-      </style>
-    </head>
-    <body>
-      <h1>Weather Spammer Server Online</h1>
-      <p>Dispatching requests every ${DISPATCH_INTERVAL}ms in parallel.</p>
-      <p>SheCodes API Keys:</p>
-      <ul>
-        ${shecodesKeys.map(k => `<li><code>${k}</code></li>`).join("")}
-      </ul>
-      <p>OpenWeatherMap Key:</p>
-      <code>${openWeatherKey}</code>
-    </body>
-    </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Weather Server is Online</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #121212;
+      color: #f0f0f0;
+      font-family: 'Inter', sans-serif;
+      padding: 2rem;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    h1 {
+      color: #ffcc00;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1rem;
+      margin: 0.5rem 0;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0.5rem 0 1.5rem 0;
+    }
+
+    li {
+      background: #1e1e1e;
+      padding: 0.5rem;
+      margin-bottom: 0.3rem;
+      border-radius: 4px;
+    }
+
+    code {
+      background: #2c2c2c;
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      font-size: 0.95rem;
+      color: #ffcc00;
+    }
+  </style>
+</head>
+<body>
+  <h1>Weather Server is Online</h1>
+  <p>Dispatching requests every <code>${DISPATCH_INTERVAL}</code>ms in parallel.</p>
+
+  <p><strong>SheCodes API Keys:</strong></p>
+  <ul>
+    ${shecodesKeys.map(k => `<li><code>${k}</code></li>`).join("")}
+  </ul>
+
+  <p><strong>OpenWeatherMap Key:</strong></p>
+  <code>${openWeatherKey}</code>
+</body>
+</html>
   `);
 });
 
